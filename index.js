@@ -16,8 +16,8 @@ const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology:
 
 async function run () {
     try {
-        const photographerCollection = client.db('photographer').collection('services');
-        const serviceCollection = client.db('photographer').collection('review');
+        const photographerCollection = client.db('photoGrapher').collection('services');
+        const serviceReviewCollection = client.db('photoGrapher').collection('reviews');
 
         // get service data with limit
         app.get('/services', async(req, res) => {
@@ -35,19 +35,43 @@ async function run () {
             res.send(services);
         })
 
-        // insert review servie data on post
+        // insert and add new service data on post
         app.post('/servicesAll', async(req, res) => {
-            const review = req.body;
-            const result = await serviceCollection.insertOne(review);
+            const addService = req.body;
+            const result = await photographerCollection.insertOne(addService);
             res.send(result)
         })
 
+        
         app.get('/servicesAll/:id', async(req, res) => {
             const id = req.params.id;
             const query = {_id: ObjectId(id)};
             const service = await photographerCollection.findOne(query);
             res.send(service)
         })
+
+        // insert review servie data on post
+        app.post('/reviewAll', async(req, res) => {
+            const review = req.body;
+            const result = await serviceReviewCollection.insertOne(review);
+            res.send(result)
+        })
+
+        app.get('/reviewAll', async(req, res) => {
+            const query  = {};
+            const cursor = serviceReviewCollection.find(query);
+            const reviewService = await cursor.toArray();
+            res.send(reviewService);
+        })
+
+        // delete review srvice data 
+        app.delete ('/reviewAll/:id', async(req, res) => {
+            const id = req.params.id ;
+            const query = {_id: ObjectId(id)};
+            const deleteReview = await serviceReviewCollection.deleteOne(query);
+            res.send(deleteReview);
+        })
+
 
     }
     finally {
