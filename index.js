@@ -1,6 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
+const { query } = require('express');
 const app = express();
 require('dotenv').config()
 const port = process.env.PORT || 5000;
@@ -54,15 +55,41 @@ async function run () {
         app.post('/reviewAll', async(req, res) => {
             const review = req.body;
             const result = await serviceReviewCollection.insertOne(review);
+            
             res.send(result)
         })
 
+        // query with email
         app.get('/reviewAll', async(req, res) => {
-            const query  = {};
+            let query  = {};
+            if(req.query.email) {
+                query = {
+                  email:req.query.email
+                }
+            }
             const cursor = serviceReviewCollection.find(query);
             const reviewService = await cursor.toArray();
             res.send(reviewService);
         })
+
+
+        // update review service 
+        app.put('/reviewAll/:id', async(req, res) => {
+            const id = req.params.id;
+            const review = req.body;
+            console.log(review)
+            const query = {_id: ObjectId(id)};
+            const option =  { upsert: true }
+            const reviewUpdate = {
+                $set: {
+                    reviewMessage: review.reviewMessage
+                }
+            }
+            const result = await serviceReviewCollection.updateOne(query, reviewUpdate, option)
+            res.send(result);
+            
+        })
+
 
         // delete review srvice data 
         app.delete ('/reviewAll/:id', async(req, res) => {
