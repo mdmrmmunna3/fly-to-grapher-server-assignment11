@@ -23,7 +23,7 @@ async function run () {
         // get service data with limit
         app.get('/services', async(req, res) => {
             const query  = {};
-            const cursor = photographerCollection.find(query);
+            const cursor = photographerCollection.find(query).sort({_id: -1});
             const services = await cursor.limit(3).toArray();
             res.send(services);
         })
@@ -31,7 +31,7 @@ async function run () {
         // get all service data
         app.get('/servicesAll', async(req, res) => {
             const query  = {};
-            const cursor = photographerCollection.find(query);
+            const cursor = photographerCollection.find(query).sort({_id: -1});
             const services = await cursor.toArray();
             res.send(services);
         })
@@ -74,21 +74,21 @@ async function run () {
 
 
         // update review service 
-        app.put('/reviewAll/:id', async(req, res) => {
-            const id = req.params.id;
-            const review = req.body;
-            console.log(review)
-            const query = {_id: ObjectId(id)};
-            const option =  { upsert: true }
-            const reviewUpdate = {
-                $set: {
-                    reviewMessage: review.reviewMessage
-                }
-            }
-            const result = await serviceReviewCollection.updateOne(query, reviewUpdate, option)
-            res.send(result);
+        // app.put('/reviewAll/:id', async(req, res) => {
+        //     const id = req.params.id;
+        //     const review = req.body;
+        //     console.log(review)
+        //     const query = {_id: ObjectId(id)};
+        //     const option =  { upsert: true }
+            // const reviewUpdate = {
+            //     $set: {
+            //         reviewMessage: review.reviewMessage
+            //     }
+            // }
+            // const result = await serviceReviewCollection.updateOne(query, reviewUpdate, option)
+            // res.send(result);
             
-        })
+        // })
 
 
         // delete review srvice data 
