@@ -55,7 +55,6 @@ async function run() {
         app.post('/reviewAll', async (req, res) => {
             const review = req.body;
             const result = await serviceReviewCollection.insertOne(review);
-
             res.send(result)
         })
 
@@ -82,20 +81,21 @@ async function run() {
 
 
         // update review service 
-        // app.patch('/reviewAll/:id', async (req, res) => {
-        //     const id = req.params.id;
-        //     const reviews = req.body;
-        //     const query = { _id: ObjectId(id) };
-        //     console.log(query)
-        //     const reviewUpdate = {
-        //         $set: {
-        //             reviews: reviews?.reviewMessage
-        //         }
-        //     }
-        //     const result = await serviceReviewCollection.updateOne(query, reviewUpdate)
-        //     res.send(result);
+        app.patch('/reviewAll/:id', async (req, res) => {
+            const id = req.params.id;
+            const { reviewMessage } = req.body;
+            const query = { _id: ObjectId(id) };
 
-        // })
+            // console.log(reviewMessage, query)
+            const reviewUpdate = {
+                $set: {
+                    reviewMessage: reviewMessage
+                }
+            }
+            // console.log(reviewUpdate)
+            const result = await serviceReviewCollection.updateOne(query, reviewUpdate)
+            res.send(result);
+        })
 
 
 
